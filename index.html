@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Cloud 튜토리얼</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #wordcloud {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- 워드클라우드가 그려질 캔버스 -->
+    <canvas id="wordcloud" width="800" height="600"></canvas>
+
+    <!-- wordcloud2.js 라이브러리 로드 -->
+    <script src="https://cdn.jsdelivr.net/gh/timdream/wordcloud2.js@2.1.2/wordcloud2.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
