@@ -1,32 +1,39 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Cloud 튜토리얼</title>
-    <script src="https://cdn.jsdelivr.net/gh/timdream/wordcloud2.js@2.1.2/wordcloud2.js"></script>
-    <script src="app.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
-        #wordcloud {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-        }
-    </style>
+    <title>WordCloud Test</title>
 </head>
 <body>
-    <!-- 워드클라우드가 그려질 캔버스 -->
-    <h1>TESTTESTtest</h1>
+    <h1>워드클라우드 테스트</h1>
     <canvas id="wordcloud" width="800" height="600"></canvas>
-    <button onclick="alert('클릭!')">클릭</button>
+
+    <script src="https://cdn.jsdelivr.net/gh/timdream/wordcloud2.js@2.1.2/wordcloud2.js"></script>
+    
+    <script>
+        console.log('스크립트 시작됨');
+        console.log('WordCloud 존재?', typeof WordCloud);
+
+        const canvas = document.getElementById('wordcloud');
+        console.log('캔버스:', canvas);
+
+        const words = [
+            ['Hello', 100],
+            ['World', 80],
+            ['JavaScript', 70],
+            ['Test', 60],
+        ];
+
+        try {
+            WordCloud(canvas, {
+                list: words,
+                gridSize: 8,
+                color: 'red'
+            });
+            console.log('워드클라우드 생성 성공!');
+        } catch(error) {
+            console.error('에러 발생:', error);
+        }
+    </script>
 </body>
 </html>
