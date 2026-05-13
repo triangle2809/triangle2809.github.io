@@ -17,16 +17,18 @@
     <script>
         const canvas = document.getElementById('wordcloud');
         const words = [
-            ['Hello', 100, '#FF6B6B'],
-            ['World', 80, '#4ECDC4'],
-            ['JS', 70, '#45B7D1'],
+            ['Hello', 100],
+            ['World', 80],
+            ['JS', 70],
         ];
 
+        const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1'];
+        
         WordCloud(canvas, {
             list: words,
             gridSize: 8,
             color: function(word, weight, fontSize, distance, theta, index) {
-                return word[2];
+                return colors[index % colors.length];
             },
             fontFamily: 'BBH Bartle',
             weightFactor: 1.5,
