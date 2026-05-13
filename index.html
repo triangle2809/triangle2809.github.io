@@ -3,31 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <title>WordCloud</title>
-
-    <!-- 구글 폰트 (BBH Bartle) -->
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=BBH+Bartle&display=swap" rel="stylesheet">
 </head>
 <body>
     <h1>워드클라우드</h1>
-    <canvas id="wordcloud" width="1200" height="900"></canvas>
+    <canvas id="wordcloud" width="1000" height="800"></canvas>
 
-    <!-- 같은 폴더의 wordcloud2.js 사용 -->
     <script src="./wordcloud2.js"></script>
     
     <script>
         const canvas = document.getElementById('wordcloud');
         const words = [
-            ['Hello', 100],
-            ['World', 80],
-            ['JavaScript', 7],
+            ['Hello', 100, '#FF6B6B'],
+            ['World', 80, '#4ECDC4'],
+            ['JS', 70, '#45B7D1'],
         ];
 
         WordCloud(canvas, {
             list: words,
             gridSize: 8,
-            color: 'red',
+            color: function(word, weight, fontSize, distance, theta, index) {
+                return word[2];
+            },
             fontFamily: 'BBH Bartle',
             weightFactor: 1.5,
             rotateRatio: 0
