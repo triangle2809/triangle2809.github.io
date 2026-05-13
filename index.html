@@ -1,106 +1,340 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-    <meta charset="UTF-8">
-    <title>WordCloud JSON Test</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<meta charset="UTF-8">
 
-    <link href="https://fonts.googleapis.com/css2?family=BBH+Bartle&display=swap" rel="stylesheet">
+	<title>WordCloud Test</title>
 
-    <style>
-        body {
-            font-family: 'BBH Bartle', sans-serif;
-            text-align: center;
-        }
+	<link rel="preconnect"
+		  href="https://fonts.googleapis.com">
 
-        canvas {
-            border: 1px solid #ccc;
-            margin-top: 20px;
-        }
-    </style>
+	<link rel="preconnect"
+		  href="https://fonts.gstatic.com"
+		  crossorigin>
+
+	<link href="https://fonts.googleapis.com/css2?family=BBH+Bartle&display=swap"
+		  rel="stylesheet">
+
+	<link rel="stylesheet"
+		  href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css">
+
+	<style>
+
+		body {
+
+			font-family: 'BBH Bartle', sans-serif;
+
+			text-align: center;
+		}
+
+		canvas {
+
+			border: 1px solid #ccc;
+
+			margin-top: 20px;
+		}
+
+		.select-area {
+
+			margin: 20px;
+		}
+
+		#playerSelect {
+
+			width: 260px;
+		}
+
+	</style>
+
 </head>
+
 <body>
 
-    <h1>워드클라우드 JSON 테스트</h1>
+	<h1>25TEST Player WordCloud</h1>
 
-    <canvas id="wordcloud" width="1000" height="800"></canvas>
+	<div class="select-area">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.2.2/wordcloud2.min.js"></script>
+		<select id="playerSelect"
+				onchange="changePlayer()">
 
-    <script>
+			<option value="">선수 선택</option>
 
-        async function loadCSV() {
+		</select>
 
-            // CSV 파일 읽기
-            const response = await fetch('./words.csv');
+	</div>
 
-            // 텍스트 형태로 변환
-            const text = await response.text();
+	<canvas id="wordcloud"
+			width="1000"
+			height="800">
+	</canvas>
 
-            // 줄 단위로 나누기
-            const lines = text.trim().split('\n');
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.2.2/wordcloud2.min.js">
+	</script>
 
-            // 첫 줄(header) 제거
-            const rows = lines.slice(1);
+	<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js">
+	</script>
 
-            // 데이터 저장용
-            const data = [];
+	<script>
 
-            rows.forEach(line => {
+		let allData = [];
 
-                const cols = line.split(',');
+		async function loadCSV() {
 
-                data.push({
-                    name: cols[0],
-                    count: Number(cols[1]),
-                    color: cols[2],
-                    group: cols[3],
-                    image: cols[4]
-                });
-            });
+			const response =
+				await fetch('./25test.csv');
 
-            console.log(data);
+			const text =
+				await response.text();
 
-            // 워드클라우드용 배열 생성
-            const words = data.map(item => [
-                item.name,
-                item.count
-            ]);
+			const lines =
+				text.trim().split('\n');
 
-            // 색상 저장
-            const colors = {};
+			const rows =
+				lines.slice(1);
 
-            data.forEach(item => {
-                colors[item.name] = item.color;
-            });
+			allData = [];
 
-            // 워드클라우드 생성
-            WordCloud(document.getElementById('wordcloud'), {
+			rows.forEach(line => {
 
-                list: words,
+				const cols =
+					line.split(',');
 
-                gridSize: 8,
+				allData.push({
 
-                weightFactor: 1,
+					league: cols[0],
 
-                rotateRatio: 0,
+					year: cols[1],
 
-                backgroundColor: '#ffffff',
+					split: cols[2],
 
-                fontFamily: '"BBH Bartle", sans-serif',
+					date: cols[3],
 
-                color: function(word) {
-                    return colors[word] || '#000000';
-                }
-            });
-        }
+					patch: cols[4],
 
-        // 실행
-        loadCSV();
+					position: cols[5],
 
-    </script>
+					playername: cols[6],
+
+					champion: cols[7],
+
+					result: Number(cols[8])
+				});
+			});
+
+			createPlayerOptions();
+
+			initializeTomSelect();
+
+			clearCanvas();
+		}
+
+		function createPlayerOptions() {
+
+			const select =
+				document.getElementById('playerSelect');
+
+			const players = [
+				...new Set(
+					allData
+						.filter(item =>
+							item.position !== 'team'
+							&& item.playername
+						)
+						.map(item =>
+							item.playername
+						)
+				)
+			];
+
+			players.sort();
+
+			players.forEach(player => {
+
+				const option =
+					document.createElement('option');
+
+				option.value =
+					player;
+
+				option.textContent =
+					player;
+
+				select.appendChild(option);
+			});
+		}
+
+		function initializeTomSelect() {
+
+			new TomSelect(
+				'#playerSelect',
+				{
+
+					create: false,
+
+					searchField: ['text'],
+
+					sortField: {
+
+						field: 'text',
+
+						direction: 'asc'
+					}
+				}
+			);
+		}
+
+		function changePlayer() {
+
+			const player =
+				document.getElementById('playerSelect').value;
+
+			if (!player) {
+
+				clearCanvas();
+
+				return;
+			}
+
+			const filtered =
+				allData.filter(item =>
+					item.position !== 'team'
+					&& item.playername === player
+				);
+
+			renderChampionWordCloud(filtered);
+		}
+
+		function renderChampionWordCloud(data) {
+
+			clearCanvas();
+
+			const championStats = {};
+
+			data.forEach(item => {
+
+				if (!item.champion) {
+
+					return;
+				}
+
+				if (!championStats[item.champion]) {
+
+					championStats[item.champion] = {
+
+						picks: 0,
+
+						wins: 0
+					};
+				}
+
+				championStats[item.champion].picks++;
+
+				if (item.result === 1) {
+
+					championStats[item.champion].wins++;
+				}
+			});
+
+			const maxPicks =
+				Math.max(
+					...Object.values(championStats)
+						.map(stat => stat.picks)
+				);
+
+			const maxFontSize =
+				99;
+
+			const minFontSize =
+				1;
+
+			const words =
+				Object.entries(championStats)
+					.map(([champion, stat]) => {
+
+						const normalizedSize =
+							minFontSize
+							+ (stat.picks / maxPicks)
+							* (maxFontSize - minFontSize);
+
+						return [
+							champion,
+							normalizedSize
+						];
+					});
+
+			const colors = {};
+
+			Object.entries(championStats)
+				.forEach(([champion, stat]) => {
+
+					const winRate =
+						stat.wins / stat.picks;
+
+					if (winRate >= 0.7) {
+
+						colors[champion] =
+							'#FF6B6B';
+
+					} else if (winRate >= 0.5) {
+
+						colors[champion] =
+							'#4ECDC4';
+
+					} else {
+
+						colors[champion] =
+							'#999999';
+					}
+				});
+
+			WordCloud(
+				document.getElementById('wordcloud'),
+				{
+
+					list: words,
+
+					gridSize: 10,
+
+					weightFactor: 1,
+
+					rotateRatio: 0,
+
+					backgroundColor: '#ffffff',
+
+					fontFamily:
+						'"BBH Bartle", sans-serif',
+
+					color: function(word) {
+
+						return colors[word]
+							|| '#000000';
+					}
+				}
+			);
+		}
+
+		function clearCanvas() {
+
+			const canvas =
+				document.getElementById('wordcloud');
+
+			const ctx =
+				canvas.getContext('2d');
+
+			ctx.clearRect(
+				0,
+				0,
+				canvas.width,
+				canvas.height
+			);
+		}
+
+		loadCSV();
+
+	</script>
 
 </body>
+
 </html>
