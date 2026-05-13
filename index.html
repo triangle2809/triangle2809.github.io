@@ -30,25 +30,50 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.2.2/wordcloud2.min.js"></script>
 
     <script>
-        async function loadWordCloud() {
 
-            // JSON 파일 읽기
-            const response = await fetch('./words.json');
+        async function loadCSV() {
 
-            // JSON 데이터를 JS 객체로 변환
-            const data = await response.json();
+            // CSV 파일 읽기
+            const response = await fetch('./words.csv');
 
-            // WordCloud용 배열 생성
+            // 텍스트 형태로 변환
+            const text = await response.text();
+
+            // 줄 단위로 나누기
+            const lines = text.trim().split('\n');
+
+            // 첫 줄(header) 제거
+            const rows = lines.slice(1);
+
+            // 데이터 저장용
+            const data = [];
+
+            rows.forEach(line => {
+
+                const cols = line.split(',');
+
+                data.push({
+                    name: cols[0],
+                    count: Number(cols[1]),
+                    color: cols[2],
+                    group: cols[3],
+                    image: cols[4]
+                });
+            });
+
+            console.log(data);
+
+            // 워드클라우드용 배열 생성
             const words = data.map(item => [
-                item.text,
-                item.weight
+                item.name,
+                item.count
             ]);
 
-            // 단어별 색상 저장
+            // 색상 저장
             const colors = {};
 
             data.forEach(item => {
-                colors[item.text] = item.color;
+                colors[item.name] = item.color;
             });
 
             // 워드클라우드 생성
@@ -72,7 +97,9 @@
             });
         }
 
-        loadWordCloud();
+        // 실행
+        loadCSV();
+
     </script>
 
 </body>
