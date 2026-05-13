@@ -2,38 +2,28 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>WordCloud Test</title>
+    <title>WordCloud</title>
 </head>
 <body>
-    <h1>워드클라우드 테스트</h1>
+    <h1>워드클라우드</h1>
     <canvas id="wordcloud" width="800" height="600"></canvas>
 
-    <script src="https://www.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud.js"></script>
+    <!-- 같은 폴더의 wordcloud2.js 사용 -->
+    <script src="./wordcloud2.js"></script>
     
     <script>
-        console.log('스크립트 시작됨');
-        console.log('WordCloud 존재?', typeof WordCloud);
-
         const canvas = document.getElementById('wordcloud');
-        console.log('캔버스:', canvas);
-
         const words = [
             ['Hello', 100],
             ['World', 80],
             ['JavaScript', 70],
-            ['Test', 60],
         ];
 
-        try {
-            WordCloud(canvas, {
-                list: words,
-                gridSize: 8,
-                color: 'red'
-            });
-            console.log('워드클라우드 생성 성공!');
-        } catch(error) {
-            console.error('에러 발생:', error);
-        }
+        WordCloud(canvas, {
+            list: words,
+            gridSize: 8,
+            color: 'red'
+        });
     </script>
 </body>
 </html>
