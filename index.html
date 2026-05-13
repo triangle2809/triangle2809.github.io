@@ -8,24 +8,33 @@
 	<title>WordCloud Test</title>
 
 	<link rel="preconnect"
-		  href="https://fonts.googleapis.com">
+	  href="https://fonts.googleapis.com">
 
-	<link rel="preconnect"
-		  href="https://fonts.gstatic.com"
-		  crossorigin>
+    <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
 
-	<link href="https://fonts.googleapis.com/css2?family=BBH+Bartle&display=swap"
-		  rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=BBH+Bartle&family=Bebas+Neue&display=swap" rel="stylesheet">
 
 	<link rel="stylesheet"
 		  href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css">
 
 	<style>
+		@font-face {
+			font-family: 'BBHTriangle';
+
+			src: url('./BBHBartleTriangle.woff2')
+				format('woff2');
+
+			font-weight: normal;
+
+			font-style: normal;
+		}
 
 		body {
 
 			font-family: 'BBH Bartle', sans-serif;
-
+            font-family: "Bebas Neue", sans-serif;
 			text-align: center;
 		}
 
@@ -46,6 +55,56 @@
 			width: 260px;
 		}
 
+		#filterArea {
+
+			display: flex;
+
+			justify-content: center;
+
+			gap: 50px;
+
+			margin-top: 20px;
+
+			margin-bottom: 20px;
+		}
+
+		#filterArea h3 {
+
+			margin-bottom: 10px;
+		}
+
+		#filterArea label {
+
+			display: block;
+
+			margin-bottom: 5px;
+		}
+
+		#tooltip {
+
+            position: absolute;
+
+            display: none;
+
+            padding: 8px 12px;
+
+            background-color: rgba(0, 0, 0, 0.8);
+
+            color: white;
+
+            border-radius: 6px;
+
+            font-size: 14px;
+
+            font-family: 'Bebas Neue', sans-serif;
+
+            pointer-events: none;
+
+            z-index: 10;
+
+            text-align: left;
+        }
+
 	</style>
 
 </head>
@@ -59,9 +118,29 @@
 		<select id="playerSelect"
 				onchange="changePlayer()">
 
-			<option value="">선수 선택</option>
+			<option value="">Choose Player</option>
 
 		</select>
+
+	</div>
+
+	<div id="filterArea">
+
+		<div>
+
+			<h3>Season</h3>
+
+			<div id="yearCheckboxes"></div>
+
+		</div>
+
+		<div>
+
+			<h3>League</h3>
+
+			<div id="leagueCheckboxes"></div>
+
+		</div>
 
 	</div>
 
@@ -69,6 +148,8 @@
 			width="1000"
 			height="800">
 	</canvas>
+
+	<div id="tooltip"></div>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.2.2/wordcloud2.min.js">
 	</script>
@@ -107,19 +188,17 @@
 
 					year: cols[1],
 
-					split: cols[2],
+					date: cols[2],
 
-					date: cols[3],
+					patch: cols[3],
 
-					patch: cols[4],
+					position: cols[4],
 
-					position: cols[5],
+					playername: cols[5],
 
-					playername: cols[6],
+					champion: cols[6],
 
-					champion: cols[7],
-
-					result: Number(cols[8])
+					result: Number(cols[7])
 				});
 			});
 
@@ -187,6 +266,125 @@
 
 		function changePlayer() {
 
+			hideTooltip();
+
+			createFilterCheckboxes();
+
+			applyFilters();
+		}
+
+		function createFilterCheckboxes() {
+
+			const player =
+				document.getElementById('playerSelect').value;
+
+			const playerData =
+				allData.filter(item =>
+					item.position !== 'team'
+					&& item.playername === player
+				);
+
+			createCheckboxGroup(
+				'yearCheckboxes',
+				[...new Set(
+					playerData.map(item => item.year)
+				)].sort()
+			);
+
+			createCheckboxGroup(
+				'leagueCheckboxes',
+				[...new Set(
+					playerData.map(item => item.league)
+				)].sort()
+			);
+		}
+
+		function createCheckboxGroup(containerId, values) {
+
+			const container =
+				document.getElementById(containerId);
+
+			container.innerHTML = '';
+
+            const allLabel =
+                document.createElement('label');
+
+            const allCheckbox =
+                document.createElement('input');
+
+            allCheckbox.type =
+                'checkbox';
+
+            allCheckbox.checked =
+                true;
+
+            allCheckbox.onchange = function() {
+
+                const checkboxes =
+                    container.querySelectorAll(
+                        'input[type="checkbox"]'
+                    );
+
+                checkboxes.forEach(checkbox => {
+
+                        checkbox.checked =
+                            allCheckbox.checked;
+                    });
+
+                applyFilters();
+            };
+
+            allLabel.appendChild(allCheckbox);
+
+            allLabel.appendChild(
+                document.createTextNode(' (Select All)')
+            );
+
+            container.appendChild(allLabel);
+
+			values.forEach(value => {
+
+				const label =
+					document.createElement('label');
+
+				const checkbox =
+					document.createElement('input');
+
+				checkbox.type =
+					'checkbox';
+
+				checkbox.value =
+					value;
+
+				checkbox.checked =
+					true;
+
+				checkbox.onchange =
+					applyFilters;
+
+				label.appendChild(checkbox);
+
+				label.appendChild(
+					document.createTextNode(' ' + value)
+				);
+
+				container.appendChild(label);
+			});
+		}
+
+		function getCheckedValues(containerId) {
+
+			return [
+				...document.querySelectorAll(
+					`#${containerId} input:checked`
+				)
+			].map(input => input.value);
+		}
+
+		function applyFilters() {
+
+			hideTooltip();
+
 			const player =
 				document.getElementById('playerSelect').value;
 
@@ -197,10 +395,18 @@
 				return;
 			}
 
+			const selectedYears =
+				getCheckedValues('yearCheckboxes');
+
+			const selectedLeagues =
+				getCheckedValues('leagueCheckboxes');
+
 			const filtered =
 				allData.filter(item =>
 					item.position !== 'team'
 					&& item.playername === player
+					&& selectedYears.includes(item.year)
+					&& selectedLeagues.includes(item.league)
 				);
 
 			renderChampionWordCloud(filtered);
@@ -304,15 +510,78 @@
 					backgroundColor: '#ffffff',
 
 					fontFamily:
-						'"BBH Bartle", sans-serif',
+						'"BBHTriangle", sans-serif',
 
 					color: function(word) {
 
 						return colors[word]
 							|| '#000000';
+					},
+
+					hover: function(item, dimension, event) {
+
+						if (!item) {
+
+							hideTooltip();
+
+							return;
+						}
+
+						const champion =
+							item[0];
+
+						const stat =
+							championStats[champion];
+
+						showTooltip(
+							event,
+							champion,
+							stat
+						);
 					}
 				}
 			);
+		}
+
+		function showTooltip(event, champion, stat) {
+
+			const tooltip =
+				document.getElementById('tooltip');
+
+			const losses =
+				stat.picks - stat.wins;
+
+			const winRate =
+				(
+					stat.wins
+					/ stat.picks
+					* 100
+				).toFixed(1);
+
+			tooltip.innerHTML =
+                '<strong>' + champion + '</strong><br>'
+                + stat.picks + 'G '
+                + stat.wins + 'W '
+                + losses + 'L<br>'
+                + winRate + '%';
+
+			tooltip.style.left =
+				event.pageX + 15 + 'px';
+
+			tooltip.style.top =
+				event.pageY + 15 + 'px';
+
+			tooltip.style.display =
+				'block';
+		}
+
+		function hideTooltip() {
+
+			const tooltip =
+				document.getElementById('tooltip');
+
+			tooltip.style.display =
+				'none';
 		}
 
 		function clearCanvas() {
