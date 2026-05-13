@@ -1,0 +1,17 @@
+[
+  {
+    "text": "Hello",
+    "weight": 100,
+    "color": "#FF6B6B"
+  },
+  {
+    "text": "World",
+    "weight": 80,
+    "color": "#4ECDC4"
+  },
+  {
+    "text": "JS",
+    "weight": 70,
+    "color": "#45B7D1"
+  }
+]
