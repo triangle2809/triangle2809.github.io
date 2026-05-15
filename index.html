@@ -5,113 +5,28 @@
 
 	<meta charset="UTF-8">
 
-	<title>WordCloud Test</title>
+	<title>Player WordCloud</title>
 
 	<link rel="preconnect"
-	  href="https://fonts.googleapis.com">
+		  href="https://fonts.googleapis.com">
 
-    <link rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin>
+	<link rel="preconnect"
+		  href="https://fonts.gstatic.com"
+		  crossorigin>
 
-    <link href="https://fonts.googleapis.com/css2?family=BBH+Bartle&family=Bebas+Neue&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=BBH+Bartle&family=Bebas+Neue&display=swap"
+		  rel="stylesheet">
 
 	<link rel="stylesheet"
 		  href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css">
 
-	<style>
-		@font-face {
-			font-family: 'BBHTriangle';
-
-			src: url('./BBHBartleTriangle.woff2')
-				format('woff2');
-
-			font-weight: normal;
-
-			font-style: normal;
-		}
-
-		body {
-
-			font-family: 'BBH Bartle', sans-serif;
-            font-family: "Bebas Neue", sans-serif;
-			text-align: center;
-		}
-
-		canvas {
-
-			border: 1px solid #ccc;
-
-			margin-top: 20px;
-		}
-
-		.select-area {
-
-			margin: 20px;
-		}
-
-		#playerSelect {
-
-			width: 260px;
-		}
-
-		#filterArea {
-
-			display: flex;
-
-			justify-content: center;
-
-			gap: 50px;
-
-			margin-top: 20px;
-
-			margin-bottom: 20px;
-		}
-
-		#filterArea h3 {
-
-			margin-bottom: 10px;
-		}
-
-		#filterArea label {
-
-			display: block;
-
-			margin-bottom: 5px;
-		}
-
-		#tooltip {
-
-            position: absolute;
-
-            display: none;
-
-            padding: 8px 12px;
-
-            background-color: rgba(0, 0, 0, 0.8);
-
-            color: white;
-
-            border-radius: 6px;
-
-            font-size: 14px;
-
-            font-family: 'Bebas Neue', sans-serif;
-
-            pointer-events: none;
-
-            z-index: 10;
-
-            text-align: left;
-        }
-
-	</style>
+	<link rel="stylesheet" href="./style.css">
 
 </head>
 
 <body>
 
-	<h1>25TEST Player WordCloud</h1>
+	<h1>Archive Player WordCloud</h1>
 
 	<div class="select-area">
 
@@ -130,7 +45,7 @@
 
 			<h3>Season</h3>
 
-			<div id="yearCheckboxes"></div>
+			<div id="seasonCheckboxes" class="filter-group"></div>
 
 		</div>
 
@@ -138,16 +53,61 @@
 
 			<h3>League</h3>
 
-			<div id="leagueCheckboxes"></div>
+			<div id="leagueCheckboxes" class="filter-group"></div>
 
 		</div>
 
 	</div>
 
-	<canvas id="wordcloud"
-			width="1000"
-			height="800">
-	</canvas>
+	<div id="mainLayout">
+
+		<section id="infoPanel">
+
+			<div id="mostWinsArea">
+
+				<h2>Most Wins</h2>
+
+				<div id="mostWinsList"></div>
+
+			</div>
+
+			<div id="playerSection">
+
+				<div id="playerInfo">
+
+					<div id="playerRecord"></div>
+
+					<div id="playerName"></div>
+
+					<div id="playerCareer"></div>
+
+				</div>
+
+				<div id="playerImageArea">
+
+					<img id="playerImage"
+						src=""
+						alt="player"
+						style="display:none;">
+
+				</div>
+
+			</div>
+
+		</section>
+
+		<section id="cloudPanel">
+
+			<canvas id="wordcloud"
+					width="1000"
+					height="800">
+			</canvas>
+
+		</section>
+
+	</div>
+
+	<div id="gameDetail"></div>
 
 	<div id="tooltip"></div>
 
@@ -157,452 +117,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js">
 	</script>
 
-	<script>
-
-		let allData = [];
-
-		async function loadCSV() {
-
-			const response =
-				await fetch('./25test.csv');
-
-			const text =
-				await response.text();
-
-			const lines =
-				text.trim().split('\n');
-
-			const rows =
-				lines.slice(1);
-
-			allData = [];
-
-			rows.forEach(line => {
-
-				const cols =
-					line.split(',');
-
-				allData.push({
-
-					league: cols[0],
-
-					year: cols[1],
-
-					date: cols[2],
-
-					patch: cols[3],
-
-					position: cols[4],
-
-					playername: cols[5],
-
-					champion: cols[6],
-
-					result: Number(cols[7])
-				});
-			});
-
-			createPlayerOptions();
-
-			initializeTomSelect();
-
-			clearCanvas();
-		}
-
-		function createPlayerOptions() {
-
-			const select =
-				document.getElementById('playerSelect');
-
-			const players = [
-				...new Set(
-					allData
-						.filter(item =>
-							item.position !== 'team'
-							&& item.playername
-						)
-						.map(item =>
-							item.playername
-						)
-				)
-			];
-
-			players.sort();
-
-			players.forEach(player => {
-
-				const option =
-					document.createElement('option');
-
-				option.value =
-					player;
-
-				option.textContent =
-					player;
-
-				select.appendChild(option);
-			});
-		}
-
-		function initializeTomSelect() {
-
-			new TomSelect(
-				'#playerSelect',
-				{
-
-					create: false,
-
-					searchField: ['text'],
-
-					sortField: {
-
-						field: 'text',
-
-						direction: 'asc'
-					}
-				}
-			);
-		}
-
-		function changePlayer() {
-
-			hideTooltip();
-
-			createFilterCheckboxes();
-
-			applyFilters();
-		}
-
-		function createFilterCheckboxes() {
-
-			const player =
-				document.getElementById('playerSelect').value;
-
-			const playerData =
-				allData.filter(item =>
-					item.position !== 'team'
-					&& item.playername === player
-				);
-
-			createCheckboxGroup(
-				'yearCheckboxes',
-				[...new Set(
-					playerData.map(item => item.year)
-				)].sort()
-			);
-
-			createCheckboxGroup(
-				'leagueCheckboxes',
-				[...new Set(
-					playerData.map(item => item.league)
-				)].sort()
-			);
-		}
-
-		function createCheckboxGroup(containerId, values) {
-
-			const container =
-				document.getElementById(containerId);
-
-			container.innerHTML = '';
-
-            const allLabel =
-                document.createElement('label');
-
-            const allCheckbox =
-                document.createElement('input');
-
-            allCheckbox.type =
-                'checkbox';
-
-            allCheckbox.checked =
-                true;
-
-            allCheckbox.onchange = function() {
-
-                const checkboxes =
-                    container.querySelectorAll(
-                        'input[type="checkbox"]'
-                    );
-
-                checkboxes.forEach(checkbox => {
-
-                        checkbox.checked =
-                            allCheckbox.checked;
-                    });
-
-                applyFilters();
-            };
-
-            allLabel.appendChild(allCheckbox);
-
-            allLabel.appendChild(
-                document.createTextNode(' (Select All)')
-            );
-
-            container.appendChild(allLabel);
-
-			values.forEach(value => {
-
-				const label =
-					document.createElement('label');
-
-				const checkbox =
-					document.createElement('input');
-
-				checkbox.type =
-					'checkbox';
-
-				checkbox.value =
-					value;
-
-				checkbox.checked =
-					true;
-
-				checkbox.onchange =
-					applyFilters;
-
-				label.appendChild(checkbox);
-
-				label.appendChild(
-					document.createTextNode(' ' + value)
-				);
-
-				container.appendChild(label);
-			});
-		}
-
-		function getCheckedValues(containerId) {
-
-			return [
-				...document.querySelectorAll(
-					`#${containerId} input:checked`
-				)
-			].map(input => input.value);
-		}
-
-		function applyFilters() {
-
-			hideTooltip();
-
-			const player =
-				document.getElementById('playerSelect').value;
-
-			if (!player) {
-
-				clearCanvas();
-
-				return;
-			}
-
-			const selectedYears =
-				getCheckedValues('yearCheckboxes');
-
-			const selectedLeagues =
-				getCheckedValues('leagueCheckboxes');
-
-			const filtered =
-				allData.filter(item =>
-					item.position !== 'team'
-					&& item.playername === player
-					&& selectedYears.includes(item.year)
-					&& selectedLeagues.includes(item.league)
-				);
-
-			renderChampionWordCloud(filtered);
-		}
-
-		function renderChampionWordCloud(data) {
-
-			clearCanvas();
-
-			const championStats = {};
-
-			data.forEach(item => {
-
-				if (!item.champion) {
-
-					return;
-				}
-
-				if (!championStats[item.champion]) {
-
-					championStats[item.champion] = {
-
-						picks: 0,
-
-						wins: 0
-					};
-				}
-
-				championStats[item.champion].picks++;
-
-				if (item.result === 1) {
-
-					championStats[item.champion].wins++;
-				}
-			});
-
-			const maxPicks =
-				Math.max(
-					...Object.values(championStats)
-						.map(stat => stat.picks)
-				);
-
-			const maxFontSize =
-				99;
-
-			const minFontSize =
-				1;
-
-			const words =
-				Object.entries(championStats)
-					.map(([champion, stat]) => {
-
-						const normalizedSize =
-							minFontSize
-							+ (stat.picks / maxPicks)
-							* (maxFontSize - minFontSize);
-
-						return [
-							champion,
-							normalizedSize
-						];
-					});
-
-			const colors = {};
-
-			Object.entries(championStats)
-				.forEach(([champion, stat]) => {
-
-					const winRate =
-						stat.wins / stat.picks;
-
-					if (winRate >= 0.7) {
-
-						colors[champion] =
-							'#FF6B6B';
-
-					} else if (winRate >= 0.5) {
-
-						colors[champion] =
-							'#4ECDC4';
-
-					} else {
-
-						colors[champion] =
-							'#999999';
-					}
-				});
-
-			WordCloud(
-				document.getElementById('wordcloud'),
-				{
-
-					list: words,
-
-					gridSize: 10,
-
-					weightFactor: 1,
-
-					rotateRatio: 0,
-
-					backgroundColor: '#ffffff',
-
-					fontFamily:
-						'"BBHTriangle", sans-serif',
-
-					color: function(word) {
-
-						return colors[word]
-							|| '#000000';
-					},
-
-					hover: function(item, dimension, event) {
-
-						if (!item) {
-
-							hideTooltip();
-
-							return;
-						}
-
-						const champion =
-							item[0];
-
-						const stat =
-							championStats[champion];
-
-						showTooltip(
-							event,
-							champion,
-							stat
-						);
-					}
-				}
-			);
-		}
-
-		function showTooltip(event, champion, stat) {
-
-			const tooltip =
-				document.getElementById('tooltip');
-
-			const losses =
-				stat.picks - stat.wins;
-
-			const winRate =
-				(
-					stat.wins
-					/ stat.picks
-					* 100
-				).toFixed(1);
-
-			tooltip.innerHTML =
-                '<strong>' + champion + '</strong><br>'
-                + stat.picks + 'G '
-                + stat.wins + 'W '
-                + losses + 'L<br>'
-                + winRate + '%';
-
-			tooltip.style.left =
-				event.pageX + 15 + 'px';
-
-			tooltip.style.top =
-				event.pageY + 15 + 'px';
-
-			tooltip.style.display =
-				'block';
-		}
-
-		function hideTooltip() {
-
-			const tooltip =
-				document.getElementById('tooltip');
-
-			tooltip.style.display =
-				'none';
-		}
-
-		function clearCanvas() {
-
-			const canvas =
-				document.getElementById('wordcloud');
-
-			const ctx =
-				canvas.getContext('2d');
-
-			ctx.clearRect(
-				0,
-				0,
-				canvas.width,
-				canvas.height
-			);
-		}
-
-		loadCSV();
-
-	</script>
+	<script src="./script.js"></script>
 
 </body>
 
