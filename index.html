@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+	<meta charset="UTF-8">
+
+	<title>Player WordCloud</title>
+
+	<link rel="preconnect"
+		  href="https://fonts.googleapis.com">
+
+	<link rel="preconnect"
+		  href="https://fonts.gstatic.com"
+		  crossorigin>
+
+	<link href="https://fonts.googleapis.com/css2?family=BBH+Bartle&family=Bebas+Neue&display=swap&family=Orbitron:wght@900&display=swap"
+		  rel="stylesheet">
+	<link rel="stylesheet"
+		  href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css">
+
+	<link rel="stylesheet" href="./style.css">
+
+</head>
+
+<body>
+
+	<h1>title title title title QQQ</h1>
+
+	
+
+	<div id="mainLayout">
+		<div id="filterHandle">
+			<div id="filterHandleBar"></div>
+
+			<div id="filterArea">
+				<div>
+					<h3>Season</h3>
+					<div id="seasonCheckboxes" class="filter-group"></div>
+				</div>
+
+				<div>
+					<h3>League</h3>
+					<div id="leagueCheckboxes" class="filter-group"></div>
+				</div>
+			</div>
+		</div>
+
+		<section id="infoPanel">
+
+			<div id="mostWinsArea">
+
+				<div id="mostWinsHeader">
+
+					<h2 id="mostWinsTitle">Most Wins</h2>
+			
+				</div>
+
+				<div id="mostWinsList">
+
+					<div class="most-win-item">
+
+						<div class="most-win-placeholder"></div>
+
+						<div>&nbsp;</div>
+
+						<strong>&nbsp;</strong>
+
+					</div>
+
+					<div class="most-win-item">
+
+						<div class="most-win-placeholder"></div>
+
+						<div>&nbsp;</div>
+
+						<strong>&nbsp;</strong>
+
+					</div>
+
+					<div class="most-win-item">
+
+						<div class="most-win-placeholder"></div>
+
+						<div>&nbsp;</div>
+
+						<strong>&nbsp;</strong>
+
+					</div>
+
+					<div class="most-win-item">
+
+						<div class="most-win-placeholder"></div>
+
+						<div>&nbsp;</div>
+
+						<strong>&nbsp;</strong>
+
+					</div>
+
+					<div class="most-win-item">
+
+						<div class="most-win-placeholder"></div>
+
+						<div>&nbsp;</div>
+
+						<strong>&nbsp;</strong>
+
+					</div>
+
+				</div>
+
+			</div>
+
+			<div id="playerSection">
+
+				<div id="playerVisual">
+
+					
+
+					<img id="teamLogoBg"
+						src="./teams/kt.png"
+						alt="team logo">
+
+					<img id="playerImage"
+						src="./players/bdd.png"
+						alt="player">
+
+				</div>
+
+				<div id="playerInfo">
+
+					<div id="playerRecord">&nbsp;</div>
+
+					<select id="playerSelect"
+							onchange="changePlayer()">
+
+						<option value="">
+							Choose Player
+						</option>
+
+					</select>
+
+					<div id="modeToggle">
+
+						<button id="playedModeButton"
+								class="mode-button active"
+								onclick="setCloudMode('played')">
+							Played AS
+						</button>
+
+						<button id="facedModeButton"
+								class="mode-button"
+								onclick="setCloudMode('faced')">
+							Played AGAINST
+						</button>
+
+					</div>
+ 
+				</div>
+
+
+
+				
+
+			</div>
+
+			<div id="matchOverlay">
+
+				<button id="closeMatchOverlay"
+						onclick="closeMatchOverlay()">
+					&lt;
+				</button>
+
+				<div id="matchOverlayContent"></div>
+
+			</div>
+
+		</section>
+
+		<section id="cloudPanel">
+
+			<canvas id="wordcloud"
+					width="1000"
+					height="800"
+					style="background: transparent;">
+			</canvas>
+
+			<canvas id="wordGlowCanvas"
+					width="1000"
+					height="800">
+			</canvas>
+
+		</section>
+
+	</div>
+
+	<div id="gameDetail"></div>
+
+	<div id="tooltip"></div>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.2.2/wordcloud2.min.js">
+	</script>
+
+	<script src="https://cdn.jsdelivr.net/npm/chroma-js@2.4.2/chroma.min.js"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js">
+	</script>
+
+	<script src="./script.js"></script>
+
+</body>
+
+</html>
