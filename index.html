@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+	<meta charset="UTF-8">
+
+	<title>Player WordCloud</title>
+
+	
+	<link rel="stylesheet"
+		  href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css">
+
+	<link rel="stylesheet" href="./style.css">
+
+</head>
+
+<body>
+
+	
+
+	
+
+	<div id="mainLayout">
+		<div id="filterHandle">
+			<div id="filterHandleBar"></div>
+
+			<div id="filterArea">
+				<div id="seasonarea">
+					<h3>Season</h3>
+					<div id="selectall"></div>
+					<div id="seasonCheckboxes" class="filter-group"></div>
+				</div>
+
+				<div id="leaguearea">
+					<h3>League</h3>
+					<div id="leagueCheckboxes" class="filter-group"></div>
+				</div>
+			</div>
+		</div>
+
+		<section id="infoPanel">
+
+			<div id="mostWinsArea">
+
+				<div id="mostWinsHeader">
+
+					<h2 id="mostWinsTitle">Most Wins</h2>
+			
+				</div>
+
+				<div id="mostWinsList">
+
+					<div class="most-win-item">
+
+						<div class="most-win-placeholder"></div>
+
+						<div>&nbsp;</div>
+
+						<strong>&nbsp;</strong>
+
+					</div>
+
+					<div class="most-win-item">
+
+						<div class="most-win-placeholder"></div>
+
+						<div>&nbsp;</div>
+
+						<strong>&nbsp;</strong>
+
+					</div>
+
+					<div class="most-win-item">
+
+						<div class="most-win-placeholder"></div>
+
+						<div>&nbsp;</div>
+
+						<strong>&nbsp;</strong>
+
+					</div>
+
+					<div class="most-win-item">
+
+						<div class="most-win-placeholder"></div>
+
+						<div>&nbsp;</div>
+
+						<strong>&nbsp;</strong>
+
+					</div>
+
+					<div class="most-win-item">
+
+						<div class="most-win-placeholder"></div>
+
+						<div>&nbsp;</div>
+
+						<strong>&nbsp;</strong>
+
+					</div>
+
+				</div>
+
+			</div>
+
+			<div id="playerSection">
+
+				<div id="playerVisual">
+
+					
+
+					<img id="teamLogoBg"
+						alt="team logo">
+
+					<img id="playerImage"
+						src="./defaultplayerimg.png"
+						alt="player">
+
+				</div>
+
+				<div id="playerInfo">
+
+					<div id="playerRecord">&nbsp;</div>
+
+					<select id="playerSelect"
+							onchange="changePlayer()">
+
+						<option value="">
+							Choose Player
+						</option>
+
+					</select>
+
+					<div id="modeToggle">
+
+						<button id="playedModeButton"
+								class="mode-button active"
+								onclick="setCloudMode('played')">
+							Played AS
+						</button>
+
+						<button id="facedModeButton"
+								class="mode-button"
+								onclick="setCloudMode('faced')">
+							Played AGAINST
+						</button>
+
+					</div>
+ 
+				</div>
+
+
+
+				
+
+			</div>
+
+			<div id="matchOverlay">
+
+				<button id="closeMatchOverlay"
+						onclick="closeMatchOverlay()">
+					╳
+				</button>
+
+				<div id="matchOverlayContent"></div>
+
+			</div>
+
+		</section>
+
+		<section id="cloudPanel">
+				<canvas id="wordcloud"
+						width="1200"
+						height="750"
+						style="background: transparent;">
+				</canvas>
+				
+				<canvas id="wordGlowCanvas"
+						width="1200"
+						height="750">
+				</canvas>
+				
+			<div id="winrateLegend">
+				<div class="legend-label" style="left:120px;">40</div>
+				<div class="legend-label" style="left:150px;">50</div>
+				<div class="legend-label" style="left:180px;">60</div>
+				<div class="legend-label" style="left:210px;">70</div>
+				<div class="legend-label" style="left:225px;">75</div>
+			</div>
+			<div id="lastUpdated">
+				<div class="updated-line">
+					DATA UPDATED · <span class="updated-date"></span>
+				</div>
+
+				<div class="credits-gap"></div>
+
+				<div class="credit-line">SOURCE · Oracle's Elixir</div>
+				<div class="credit-line">ASSETS · Riot Games</div>
+			</div>
+			<button id="detailButton" onclick="openCareerOverlay()">
+				CHAMPION STATS
+			</button>
+		</section>
+		<div id="careerOverlay">
+
+			<button id="closeCareerOverlay"
+					onclick="closeCareerOverlay()">
+				╳
+			</button>
+			<div id="careerOverlayContent">
+				<div id="careerOverlayWrap">
+					<div id="careerSortButtons">
+						<button class="career-sort active" data-sort="games" onclick="setCareerSort('games')">GAMES</button>
+						<button class="career-sort" data-sort="wins" onclick="setCareerSort('wins')">WINS</button>
+						<button class="career-sort" data-sort="losses" onclick="setCareerSort('losses')">LOSSES</button>
+						<button class="career-sort" data-sort="winrate" onclick="setCareerSort('winrate')">WINRATE</button>
+					</div>
+					<div id="careerOverlayInner">
+						<div id="careerTopCards"></div>
+						<div id="careerChampionList"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="gameDetail"></div>
+
+	<div id="tooltip"></div>
+
+	<script src="./wordcloud2.js"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/chroma-js@2.4.2/chroma.min.js"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js">
+	</script>
+
+	<script src="./script.js"></script>
+
+</body>
+
+</html>
