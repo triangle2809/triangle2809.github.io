@@ -140,27 +140,30 @@ async function loadCSV() {
 
     console.time('fetch');
 
-    const response1 =
-        await fetch('./archive_player.csv');
-
-    const response2 =
-        await fetch('./archive_player25.csv');
-
-    const response3 =
-        await fetch('./current_player26.csv');
+    const [
+        response1,
+        response2,
+        response3
+    ] = await Promise.all([
+        fetch('./archive_player.csv'),
+        fetch('./archive_player25.csv'),
+        fetch('./current_player26.csv')
+    ]);
 
     console.timeEnd('fetch');
 
+
     console.time('response.text');
 
-    const text1 =
-        await response1.text();
-
-    const text2 =
-        await response2.text();
-
-    const text3 =
-        await response3.text();
+    const [
+        text1,
+        text2,
+        text3
+    ] = await Promise.all([
+        response1.text(),
+        response2.text(),
+        response3.text()
+    ]);
 
     console.timeEnd('response.text');
 
