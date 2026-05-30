@@ -841,9 +841,9 @@ function renderChampionWordCloud(data) {
     // );
     // console.log(words.slice(0,3));
 
-    const TOP_AREA_LIMIT = 1350;
+    const TOP_AREA_LIMIT = 2200;
 
-    const topCount = Math.min(3, words.length);
+    const topCount = Math.min(5, words.length);
 
     const topAreaSum =
         words
