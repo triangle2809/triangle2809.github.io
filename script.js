@@ -8,9 +8,9 @@ const LEAGUE_GROUPS = {
 			{name: 'LCK', include: ['OGN', 'LCK'] },
 			{name: 'LPL', include: ['LPL'] },
 			{name: 'LEC', include: ['EU LCS', 'LEC'] },
-			{name: 'LCS', include: ['NA LCS', 'LCS','LTA', 'LTA N', 'LTA S'] },
+			{name: 'LCS', include: ['NA LCS', 'LCS','LTA', 'LTA N'] },
 			{name: 'LCP', include: ['LMS', 'LCP'] },
-            {name: 'CBLOL', include: ['CBLOL']}
+            {name: 'CBLOL', include: ['CBLOL', 'LTA S']}
 		]
 	},
 	international: {
