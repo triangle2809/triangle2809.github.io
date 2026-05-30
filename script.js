@@ -2479,25 +2479,14 @@ function bindWinrateLegendHover() {
 (async function init() {
     console.time('INIT TOTAL');
 
-    console.time('loadChampionMap');
-	await loadChampionMap();
-    console.timeEnd('loadChampionMap');
+	await Promise.all([
+        loadChampionMap(),
+        loadPlayerProfiles(),
+        loadTeamLogos(),
+        loadTeamAbbrMap()
+    ]);
 
-    console.time('buildChampionWordWidthMap');
-	buildChampionWordWidthMap();
-    console.timeEnd('buildChampionWordWidthMap');
-
-    console.time('loadPlayerProfiles');
-	await loadPlayerProfiles();
-    console.timeEnd('loadPlayerProfiles');
-
-    console.time('loadTeamLogos');
-	await loadTeamLogos();
-    console.timeEnd('loadTeamLogos');
-
-    console.time('loadTeamAbbrMap');
-	await loadTeamAbbrMap();
-    console.timeEnd('loadTeamAbbrMap');
+    buildChampionWordWidthMap();
 
     console.time('loadCSV');
 	await loadCSV();
